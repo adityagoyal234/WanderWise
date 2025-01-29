@@ -1,12 +1,10 @@
 require('dotenv').config();
-  // console.log("Loaded CLOUD_NAME:", process.env.CLOUD_NAME);
-  // console.log("Loaded CLOUD_API_KEY:", process.env.CLOUD_API_KEY);
-  // console.log("Loaded CLOUD_API_SECRET:", process.env.CLOUD_API_SECRET);
   if(process.env.NODE_ENV != "production") {
 }
 const express = require("express");
 const MongoStore = require('connect-mongo');
 const app = express();
+const PORT = process.env.PORT || 8080;
 const mongoose = require("mongoose");
 const Listing = require("./models/listing.js");
 const path = require("path");
@@ -22,13 +20,10 @@ const LocalStrategy=require("passport-local").Strategy;
 const session = require("express-session");
 const router = express.Router();
 const listingsRouter=require("./routes/listing.js");
-// const reviews=require("./routes/review.js")
 const userRouter=require("./routes/user.js");
-// const cookieParse=require("cookie-parser");
-// app.use(cookieParse());
 const flash = require('connect-flash');
 const { error } = require('console');
-// const dburl=process.env.ATLASDB_URL;
+
 const dburl = process.env.ATLASDB_URL || "mongodb://127.0.0.1:27017/wanderlust";
 const secret = process.env.SECRET || "fallbackSecret";
 
@@ -95,12 +90,13 @@ app.use((req,res,next)=>{
   res.locals.CurrUser=req.user;
   next();
 });
-
+app.get("/", (req, res) => {
+  res.send("Welcome to Wanderlust!");
+});
 app.use("/listings",listingsRouter)
 app.use("/",userRouter);  
 
 
-// app.use("/listings/:id/reviews",reviews)
 
 //Show Route
 app.get("/listings/:id", wrapAsync (async (req, res) => {
@@ -172,6 +168,6 @@ app.use((err, req, res,next)=>{
 });
 
 
-app.listen(8080, () => {
+app.listen(PORT, () => {
   console.log("server is listening to port 8080");
 });
