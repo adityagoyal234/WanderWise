@@ -90,9 +90,7 @@ app.use((req,res,next)=>{
   res.locals.CurrUser=req.user;
   next();
 });
-app.get("/", (req, res) => {
-  res.send("Welcome to Wanderlust!");
-});
+
 app.use("/listings",listingsRouter)
 app.use("/",userRouter);  
 
