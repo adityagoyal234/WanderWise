@@ -1,9 +1,8 @@
-const dotenvConfig = require('dotenv').config();
-  console.log("Loaded CLOUD_NAME:", process.env.CLOUD_NAME);
-  console.log("Loaded CLOUD_API_KEY:", process.env.CLOUD_API_KEY);
-  console.log("Loaded CLOUD_API_SECRET:", process.env.CLOUD_API_SECRET);
+require('dotenv').config();
+  // console.log("Loaded CLOUD_NAME:", process.env.CLOUD_NAME);
+  // console.log("Loaded CLOUD_API_KEY:", process.env.CLOUD_API_KEY);
+  // console.log("Loaded CLOUD_API_SECRET:", process.env.CLOUD_API_SECRET);
   if(process.env.NODE_ENV != "production") {
-    require("dotenv").config();
 }
 const express = require("express");
 const MongoStore = require('connect-mongo');
@@ -11,7 +10,6 @@ const app = express();
 const mongoose = require("mongoose");
 const Listing = require("./models/listing.js");
 const path = require("path");
-const favicon = require('serve-favicon');
 const methodOverride = require("method-override");
 const ejsMate=require("ejs-mate");
 const  wrapAsync=require("./utils/wrapAsync.js");
@@ -30,8 +28,10 @@ const userRouter=require("./routes/user.js");
 // app.use(cookieParse());
 const flash = require('connect-flash');
 const { error } = require('console');
-// const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
-const dburl=process.env.ATLASDB_URL;
+// const dburl=process.env.ATLASDB_URL;
+const dburl = process.env.ATLASDB_URL || "mongodb://127.0.0.1:27017/wanderlust";
+const secret = process.env.SECRET || "fallbackSecret";
+
 main()
   .then(() => {
     console.log("connected to DB");
@@ -44,10 +44,10 @@ async function main() {
   await mongoose.connect(dburl);
 }
 
+
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "public")));
-app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(methodOverride("_method"));
@@ -56,17 +56,17 @@ app.engine('ejs',ejsMate);
 const store= MongoStore.create({
   mongoUrl:dburl,
   crypto:{
-    secret: process.env.SECRET,
+    secret: process.env.SECRET|| "fallbackSecret",
   },
   touchAfter:24 *3600,
 })
-store.on("error",()=>{
-  console.log("EROR IN MONGOO SESSION IN",error);
+store.on("error",(err)=>{
+  console.log("EROR IN MONGOO SESSION IN",err);
   
 })
 const sessionOptions={
   store,
-  secret:process.env.SECRET,
+  secret: process.env.SECRET,
   resave:false,
   saveUninitialized:true,
   cookie:{
@@ -74,6 +74,7 @@ const sessionOptions={
     max: 7 * 24 * 60 * 60 * 1000,
     httpOnly:true,
     secure: process.env.NODE_ENV === 'production',  
+    
 
   },
   

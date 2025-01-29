@@ -9,8 +9,6 @@
             name="username" 
             id="username" class="form-control"
             required>
-            
-            
             <label for="password" class="form-label">password</label>
             <input type="password"
             id="password" class="form-control"
@@ -24,11 +22,7 @@
 <script>
     (() => {
       "use strict";
-  
-      // Fetch all the forms we want to apply custom Bootstrap validation styles to
       const forms = document.querySelectorAll(".needs-validation");
-  
-      // Loop over them and prevent submission
       Array.from(forms).forEach((form) => {
         form.addEventListener(
           "submit",

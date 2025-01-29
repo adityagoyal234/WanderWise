@@ -2,13 +2,10 @@
 
   <div class="row mt-3">
     <div class="col-8 offset-2">
-
-   
   <h3 >Edit your Listing</h3>
   <form method="POST" action="/listings/<%=listing._id %>?_method=PUT" novalidate class="needs-validation">
     <div class="mb-3">
       <label for="title" class="form-label">Title</label>
-
       <input
         type="text"
         name="listing[title]"
@@ -41,7 +38,7 @@
     <div class="mb-3 col-md-4">
       <label for="Price" class="form-label">Price</label>
       <input
-        type="number"
+        type="text"
         name="listing[price]"
         value="<%=listing.price%>"
         class="form-control"
@@ -79,11 +76,7 @@
 <script>
   (() => {
     "use strict";
-
-    // Fetch all the forms we want to apply custom Bootstrap validation styles to
     const forms = document.querySelectorAll(".needs-validation");
-
-    // Loop over them and prevent submission
     Array.from(forms).forEach((form) => {
       form.addEventListener(
         "submit",

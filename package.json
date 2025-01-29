@@ -1,10 +1,7 @@
-
-
 {
-  "engine":{
-    "node":"20.18.0"
+  "engine": {
+    "node": "20.18.0"
   },
-
   "name": "majorproject",
   "version": "1.0.0",
   "description": "",
@@ -34,7 +31,6 @@
     "multer-storage-cloudinary": "^4.0.0",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
-    "passport-local-mongoose": "^8.0.0",
-    "serve-favicon": "^2.5.0"
+    "passport-local-mongoose": "^8.0.0"
   }
 }

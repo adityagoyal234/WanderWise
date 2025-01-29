@@ -4,17 +4,9 @@ const  wrapAsync=require("../utils/wrapAsync.js");
 const ExpressError=require("../utils/ExpressError.js");
 const {listingSchema}=require("../schema.js")
 const Listing = require("../models/listing.js");
-const Review = require("../models/review.js");
 const multer = require('multer');
 const {storage}=require("../cloudConfig..js")
 const upload = multer({ storage });
-
-
-
-
-
-// const  {isLoggedIn}  = require("../utils/middleware.js");
-// console.log("isLoggedIn imported:", isLoggedIn);
 const validateListing=(req,res,next)=>{ 
     const error=listingSchema.validate(req.body);
    

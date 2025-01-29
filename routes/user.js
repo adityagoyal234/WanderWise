@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const User = require("../models/user");
 const passport = require("passport"); 
-// const { savaRedirectUrl } = require("./listing");
 router.get("/signup", (req, res) => {
   res.render("user/signup");
 });
