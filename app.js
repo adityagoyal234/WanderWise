@@ -4,7 +4,7 @@ require('dotenv').config();
 const express = require("express");
 const MongoStore = require('connect-mongo');
 const app = express();
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 10000;
 const mongoose = require("mongoose");
 const Listing = require("./models/listing.js");
 const path = require("path");
@@ -169,5 +169,5 @@ app.use((err, req, res,next)=>{
 
 console.log("Using port:", PORT);
 app.listen(PORT, () => {
-  console.log("server is listening to port 8080");
+  console.log("server is listening to port 10000");
 });
