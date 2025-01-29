@@ -167,7 +167,7 @@ app.use((err, req, res,next)=>{
   next(err);
 });
 
-
+console.log("Using port:", PORT);
 app.listen(PORT, () => {
   console.log("server is listening to port 8080");
 });
