@@ -14,22 +14,23 @@
 - **Frontend:** HTML, CSS, JavaScript
 - **Backend:** Node.js, Express.js
 - **Database:** MongoDB (Mongoose)
-- **Authentication:** JWT & OAuth (Google Login)
+- **Authentication:(Passport.js)** – Secure login/signup
 - **Hosting:** Vercel / Netlify (Frontend) & Heroku / Render (Backend)
 
 ## 🔧 Installation & Setup
 1. **Clone the repository:**
    ```sh
-   git clone https://github.com/yourusername/wanderlust.git
+   git clone https://github.com/Ruksana-khatun/wanderlust.git
    cd wanderlust
    npm install
-   MONGO_URI=your_mongodb_connection_string
-PORT=8080
 npm start  # Start the server
 📌 Roadmap
  Add real-time chat feature.
  Implement AI-powered trip recommendations.
  Build a mobile-friendly version.
+
+
+ 
  📝 Contributing
 Fork the repo 🍴
 Create a new branch 🚀
