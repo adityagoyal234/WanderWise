@@ -23,20 +23,23 @@
    git clone https://github.com/Ruksana-khatun/wanderlust.git
    cd wanderlust
    npm install
-npm start  # Start the server
+  npm start  
+ # Start the server
+
+
+ 
 📌 Roadmap
  Add real-time chat feature.
  Implement AI-powered trip recommendations.
  Build a mobile-friendly version.
 
-
+ 
  
  📝 Contributing
 Fork the repo 🍴
 Create a new branch 🚀
 Commit your changes ✨
 Open a Pull Request 🔥
-📜 License
-This project is licensed under the MIT License.
+
 
 
