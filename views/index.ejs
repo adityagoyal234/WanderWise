@@ -1,243 +1,232 @@
+<%- layout('layouts/boilerplate') %>
 
-<% layout("/layouts/boilerplate") -%> 
-<style>
-  #fillter{
-    display: flex;
-    flex-wrap: wrap;
-  }
-  .fillter{
-    text-align: center;
-    margin-right: 2rem;
-    margin-top: 2rem;
-    opacity: 0.7;
-  }
-  .fillter:hover{ 
-    opacity: 1;
-    cursor: pointer;
-    color: aliceblue;
-    
-  }
-  .tax-info{
-    display: none;
-  }
-  .tax-toggle{
-    border: 1px solid black;
-    border-radius: 1rem;
-    height: 3.5rem;
-    padding: 1rem;
-    margin-left: 3rem;
-    margin-top: 1rem;
-    display: flex;
-    align-items: center;
-    background-color: rgb(22, 22, 95);
-    color: #fff;
+  <div class="container mt-4">
+    <!-- Search and Filter Section -->
+    <div class="row mb-4">
+      <div class="col-md-12">
+        <form action="/listings" method="GET" class="row g-3" id="searchForm">
+          <div class="col-md-4">
+            <div class="input-group position-relative">
+              <input type="text" class="form-control" name="search" id="searchInput" placeholder="Search listings..."
+                value="<%= query?.search || '' %>">
+              <button class="btn btn-primary" type="submit">
+                <i class="fas fa-search"></i>
+              </button>
+              <div id="suggestions" class="position-absolute w-100 bg-white border rounded-bottom shadow-sm"
+                style="top: 100%; z-index: 1000; display: none;"></div>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <input type="number" class="form-control" name="minPrice" id="minPrice" placeholder="Min Price" min="0"
+              value="<%= query?.minPrice || '' %>">
+          </div>
+          <div class="col-md-2">
+            <input type="number" class="form-control" name="maxPrice" id="maxPrice" placeholder="Max Price" min="0"
+              value="<%= query?.maxPrice || '' %>">
+          </div>
+          <div class="col-md-2">
+            <input type="text" class="form-control" name="location" placeholder="Location"
+              value="<%= query?.location || '' %>">
+          </div>
+          <div class="col-md-2">
+            <select class="form-select" name="sort">
+              <option value="">Sort By</option>
+              <option value="price_asc" <%=query?.sort==='price_asc' ? 'selected' : '' %>>Price: Low to High</option>
+              <option value="price_desc" <%=query?.sort==='price_desc' ? 'selected' : '' %>>Price: High to Low</option>
+              <option value="rating_desc" <%=query?.sort==='rating_desc' ? 'selected' : '' %>>Rating</option>
+            </select>
+          </div>
+        </form>
+      </div>
+    </div>
 
-  }
-  
-  @media (min-width: 1024px) and (max-width: 1502px) {
-    #fillter {
-      justify-content: flex-start; /* Align items to the left */
-      flex-wrap: wrap; /* Allow wrapping */
-      gap: 1.5rem; /* Add spacing between items */
-    }
-
-    .tax-toggle {
-      height: 3rem;
-      padding: 0.8rem 1rem;
-      margin: 1rem;
-      font-size: 1rem; /* Adjust text size */
-      flex: 1;
-      max-width: 50%; /* Limit button width */
-      text-align: center;
-      justify-content: center;
-    }
-
-    .fillter {
-      margin-right: 1rem;
-      margin-top: 1rem;
-    }
-
-    .fillter p {
-      font-size: 1rem;
-    }
-
-    .fillter svg {
-      width: 22px;
-      height: 22px;
-    }
-  }
-
- 
-  @media (max-width: 1024px) {
-    #fillter {
-      justify-content: center;
-    }
-
-    .tax-toggle {
-      height: 3rem;
-      padding: 0.8rem;
-      margin: 1rem;
-      font-size: 0.9rem;
-      flex: 1;
-      max-width: 80%; /* Adjust button size */
-      text-align: center;
-      justify-content: center;
-    }
-
-    .fillter {
-      margin: 0.5rem 1rem;
-    }
-
-    .fillter p {
-      font-size: 0.9rem;
-    }
-
-    .fillter svg {
-      width: 20px;
-      height: 20px;
-    }
-  }
-
-  @media (max-width: 768px) {
-    .tax-toggle {
-      height: 2.5rem;
-      padding: 0.6rem;
-      font-size: 0.8rem;
-      margin: 0.5rem;
-      flex: 1;
-      max-width: 90%;
-      text-align: center;
-    }
-
-    .fillter {
-      margin: 0.5rem;
-    }
-
-    .fillter p {
-      font-size: 0.8rem;
-    }
-
-    .fillter svg {
-      width: 18px;
-      height: 18px;
-    }
-  }
-
-  @media (max-width: 480px) {
-    .tax-toggle {
-      height: 2.2rem;
-      padding: 0.4rem;
-      font-size: 0.7rem;
-      margin: 0.3rem;
-      flex: 1;
-      text-align: center;
-    }
-
-    .fillter {
-      margin: 0.3rem;
-    }
-
-    .fillter p {
-      font-size: 0.7rem;
-    }
-
-    .fillter svg {
-      width: 16px;
-      height: 16px;
-    }
-  }
-  
-</style>
-<div id="fillter">
-  <div class="fillter">
-    <div><svg xmlns="http://www.w3.org/2000/svg width="24" height="24" viewBox="0 0 448 512"><path d="M159.3 5.4c7.8-7.3 19.9-7.2 27.7 .1c27.6 25.9 53.5 53.8 77.7 84c11-14.4 23.5-30.1 37-42.9c7.9-7.4 20.1-7.4 28 .1c34.6 33 63.9 76.6 84.5 118c20.3 40.8 33.8 82.5 33.8 111.9C448 404.2 348.2 512 224 512C98.4 512 0 404.1 0 276.5c0-38.4 17.8-85.3 45.4-131.7C73.3 97.7 112.7 48.6 159.3 5.4zM225.7 416c25.3 0 47.7-7 68.8-21c42.1-29.4 53.4-88.2 28.1-134.4c-4.5-9-16-9.6-22.5-2l-25.2 29.3c-6.6 7.6-18.5 7.4-24.7-.5c-16.5-21-46-58.5-62.8-79.8c-6.3-8-18.3-8.1-24.7-.1c-33.8 42.5-50.8 69.3-50.8 99.4C112 375.4 162.6 416 225.7 416z"/></svg></div>
-         <p>Trending</p>
-  </div>
-  <div class="fillter">
-    <div><svg xmlns="http://www.w3.org/2000/svg width="24" height="24" viewBox="0 0 640 512"><path d="M32 32c17.7 0 32 14.3 32 32l0 256 224 0 0-160c0-17.7 14.3-32 32-32l224 0c53 0 96 43 96 96l0 224c0 17.7-14.3 32-32 32s-32-14.3-32-32l0-32-224 0-32 0L64 416l0 32c0 17.7-14.3 32-32 32s-32-14.3-32-32L0 64C0 46.3 14.3 32 32 32zm144 96a80 80 0 1 1 0 160 80 80 0 1 1 0-160z"/></svg></div>
-         <p>Rooms</p>
-  </div>
-  <div class="fillter">
-    <div><svg xmlns="http://www.w3.org/2000/svg width="24" height="24" viewBox="0 0 512 512"><path d="M500.3 7.3C507.7 13.3 512 22.4 512 32l0 144c0 26.5-28.7 48-64 48s-64-21.5-64-48s28.7-48 64-48l0-57L352 90.2 352 208c0 26.5-28.7 48-64 48s-64-21.5-64-48s28.7-48 64-48l0-96c0-15.3 10.8-28.4 25.7-31.4l160-32c9.4-1.9 19.1 .6 26.6 6.6zM74.7 304l11.8-17.8c5.9-8.9 15.9-14.2 26.6-14.2l61.7 0c10.7 0 20.7 5.3 26.6 14.2L213.3 304l26.7 0c26.5 0 48 21.5 48 48l0 112c0 26.5-21.5 48-48 48L48 512c-26.5 0-48-21.5-48-48L0 352c0-26.5 21.5-48 48-48l26.7 0zM192 408a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zM478.7 278.3L440.3 368l55.7 0c6.7 0 12.6 4.1 15 10.4s.6 13.3-4.4 17.7l-128 112c-5.6 4.9-13.9 5.3-19.9 .9s-8.2-12.4-5.3-19.2L391.7 400 336 400c-6.7 0-12.6-4.1-15-10.4s-.6-13.3 4.4-17.7l128-112c5.6-4.9 13.9-5.3 19.9-.9s8.2 12.4 5.3 19.2zm-339-59.2c-6.5 6.5-17 6.5-23 0L19.9 119.2c-28-29-26.5-76.9 5-103.9c27-23.5 68.4-19 93.4 6.5l10 10.5 9.5-10.5c25-25.5 65.9-30 93.9-6.5c31 27 32.5 74.9 4.5 103.9l-96.4 99.9z"/></svg></div>
-         <p>Icon</p>
-  </div>
-  <div class="fillter">
-    <div><svg xmlns="http://www.w3.org/2000/svg width="24" height="24"  viewBox="0 0 576 512"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg></div>
-         <p>Star</p>
-  </div>
-  <div class="fillter">
-    <div><svg xmlns="http://www.w3.org/2000/svg  width="24" height="24" viewBox="0 0 512 512"><path d="M0 96C0 60.7 28.7 32 64 32l384 0c35.3 0 64 28.7 64 64l0 320c0 35.3-28.7 64-64 64L64 480c-35.3 0-64-28.7-64-64L0 96zM48 368l0 32c0 8.8 7.2 16 16 16l32 0c8.8 0 16-7.2 16-16l0-32c0-8.8-7.2-16-16-16l-32 0c-8.8 0-16 7.2-16 16zm368-16c-8.8 0-16 7.2-16 16l0 32c0 8.8 7.2 16 16 16l32 0c8.8 0 16-7.2 16-16l0-32c0-8.8-7.2-16-16-16l-32 0zM48 240l0 32c0 8.8 7.2 16 16 16l32 0c8.8 0 16-7.2 16-16l0-32c0-8.8-7.2-16-16-16l-32 0c-8.8 0-16 7.2-16 16zm368-16c-8.8 0-16 7.2-16 16l0 32c0 8.8 7.2 16 16 16l32 0c8.8 0 16-7.2 16-16l0-32c0-8.8-7.2-16-16-16l-32 0zM48 112l0 32c0 8.8 7.2 16 16 16l32 0c8.8 0 16-7.2 16-16l0-32c0-8.8-7.2-16-16-16L64 96c-8.8 0-16 7.2-16 16zM416 96c-8.8 0-16 7.2-16 16l0 32c0 8.8 7.2 16 16 16l32 0c8.8 0 16-7.2 16-16l0-32c0-8.8-7.2-16-16-16l-32 0zM160 128l0 64c0 17.7 14.3 32 32 32l128 0c17.7 0 32-14.3 32-32l0-64c0-17.7-14.3-32-32-32L192 96c-17.7 0-32 14.3-32 32zm32 160c-17.7 0-32 14.3-32 32l0 64c0 17.7 14.3 32 32 32l128 0c17.7 0 32-14.3 32-32l0-64c0-17.7-14.3-32-32-32l-128 0z"/></svg></div>
-         <p>Films</p>
-  </div>
-  <div class="fillter">
-    <div><svg xmlns="http://www.w3.org/2000/svg  width="24" height="24" viewBox="0 0 576 512"><path d="M346.3 271.8l-60.1-21.9L214 448 32 448c-17.7 0-32 14.3-32 32s14.3 32 32 32l512 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-261.9 0 64.1-176.2zm121.1-.2l-3.3 9.1 67.7 24.6c18.1 6.6 38-4.2 39.6-23.4c6.5-78.5-23.9-155.5-80.8-208.5c2 8 3.2 16.3 3.4 24.8l.2 6c1.8 57-7.3 113.8-26.8 167.4zM462 99.1c-1.1-34.4-22.5-64.8-54.4-77.4c-.9-.4-1.9-.7-2.8-1.1c-33-11.7-69.8-2.4-93.1 23.8l-4 4.5C272.4 88.3 245 134.2 226.8 184l-3.3 9.1L434 269.7l3.3-9.1c18.1-49.8 26.6-102.5 24.9-155.5l-.2-6zM107.2 112.9c-11.1 15.7-2.8 36.8 15.3 43.4l71 25.8 3.3-9.1c19.5-53.6 49.1-103 87.1-145.5l4-4.5c6.2-6.9 13.1-13 20.5-18.2c-79.6 2.5-154.7 42.2-201.2 108z"/></svg></div>
-         <p>Beach</p>
-  </div>
-  <div class="fillter">
-    <div><svg xmlns="http://www.w3.org/2000/svg  width="24" height="24" viewBox="0 0 512 512"><path d="M248 0l16 0c13.3 0 24 10.7 24 24l0 10.7C368.4 48.1 431.9 111.6 445.3 192l2.7 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L64 256c-17.7 0-32-14.3-32-32s14.3-32 32-32l2.7 0C80.1 111.6 143.6 48.1 224 34.7L224 24c0-13.3 10.7-24 24-24zM64 288l64 0 0 128 40 0 0-128 64 0 0 128 48 0 0-128 64 0 0 128 40 0 0-128 64 0 0 132.3c.6 .3 1.2 .7 1.8 1.1l48 32c11.7 7.8 17 22.4 12.9 35.9S494.1 512 480 512L32 512c-14.1 0-26.5-9.2-30.6-22.7s1.1-28.1 12.9-35.9l48-32c.6-.4 1.2-.7 1.8-1.1L64 288z"/></svg></div>
-         <p>Demos</p>
-  </div>
-  <div class="fillter">
-    <div><svg xmlns="http://www.w3.org/2000/svg  width="24" height="24" viewBox="0 0 448 512"><path d="M210.6 5.9L62 169.4c-3.9 4.2-6 9.8-6 15.5C56 197.7 66.3 208 79.1 208l24.9 0L30.6 281.4c-4.2 4.2-6.6 10-6.6 16C24 309.9 34.1 320 46.6 320L80 320 5.4 409.5C1.9 413.7 0 419 0 424.5c0 13 10.5 23.5 23.5 23.5L192 448l0 32c0 17.7 14.3 32 32 32s32-14.3 32-32l0-32 168.5 0c13 0 23.5-10.5 23.5-23.5c0-5.5-1.9-10.8-5.4-15L368 320l33.4 0c12.5 0 22.6-10.1 22.6-22.6c0-6-2.4-11.8-6.6-16L344 208l24.9 0c12.7 0 23.1-10.3 23.1-23.1c0-5.7-2.1-11.3-6-15.5L237.4 5.9C234 2.1 229.1 0 224 0s-10 2.1-13.4 5.9z"/></svg></div>
-         <p>Tree</p>
-  </div>
-  <div class="fillter">
-    <div><svg xmlns="http://www.w3.org/2000/svg width="24" height="24" viewBox="0 0 576 512"><path d="M575.8 255.5c0 18-15 32.1-32 32.1l-32 0 .7 160.2c0 2.7-.2 5.4-.5 8.1l0 16.2c0 22.1-17.9 40-40 40l-16 0c-1.1 0-2.2 0-3.3-.1c-1.4 .1-2.8 .1-4.2 .1L416 512l-24 0c-22.1 0-40-17.9-40-40l0-24 0-64c0-17.7-14.3-32-32-32l-64 0c-17.7 0-32 14.3-32 32l0 64 0 24c0 22.1-17.9 40-40 40l-24 0-31.9 0c-1.5 0-3-.1-4.5-.2c-1.2 .1-2.4 .2-3.6 .2l-16 0c-22.1 0-40-17.9-40-40l0-112c0-.9 0-1.9 .1-2.8l0-69.7-32 0c-18 0-32-14-32-32.1c0-9 3-17 10-24L266.4 8c7-7 15-8 22-8s15 2 21 7L564.8 231.5c8 7 12 15 11 24z"/></svg></div>
-         <p>House</p>
-  </div>
-  <div class="fillter">
-    <div><svg xmlns="http://www.w3.org/2000/svg width="24" height="24" viewBox="0 0 640 512"><path d="M560 160A80 80 0 1 0 560 0a80 80 0 1 0 0 160zM55.9 512l325.2 0 75 0 122.8 0c33.8 0 61.1-27.4 61.1-61.1c0-11.2-3.1-22.2-8.9-31.8l-132-216.3C495 196.1 487.8 192 480 192s-15 4.1-19.1 10.7l-48.2 79L286.8 81c-6.6-10.6-18.3-17-30.8-17s-24.1 6.4-30.8 17L8.6 426.4C3 435.3 0 445.6 0 456.1C0 487 25 512 55.9 512z"/></svg></div>
-         <p>Mountaion-sun</p>
-  </div>
-  <div class="fillter">
-    <div><svg xmlns="http://www.w3.org/2000/svg width="24" height="24" viewBox="0 0 512 512"><path d="M0 32C0 14.3 14.3 0 32 0L480 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l0 384c17.7 0 32 14.3 32 32s-14.3 32-32 32l-176 0 0-48c0-26.5-21.5-48-48-48s-48 21.5-48 48l0 48L32 512c-17.7 0-32-14.3-32-32s14.3-32 32-32L32 64C14.3 64 0 49.7 0 32zm96 80l0 32c0 8.8 7.2 16 16 16l32 0c8.8 0 16-7.2 16-16l0-32c0-8.8-7.2-16-16-16l-32 0c-8.8 0-16 7.2-16 16zM240 96c-8.8 0-16 7.2-16 16l0 32c0 8.8 7.2 16 16 16l32 0c8.8 0 16-7.2 16-16l0-32c0-8.8-7.2-16-16-16l-32 0zm112 16l0 32c0 8.8 7.2 16 16 16l32 0c8.8 0 16-7.2 16-16l0-32c0-8.8-7.2-16-16-16l-32 0c-8.8 0-16 7.2-16 16zM112 192c-8.8 0-16 7.2-16 16l0 32c0 8.8 7.2 16 16 16l32 0c8.8 0 16-7.2 16-16l0-32c0-8.8-7.2-16-16-16l-32 0zm112 16l0 32c0 8.8 7.2 16 16 16l32 0c8.8 0 16-7.2 16-16l0-32c0-8.8-7.2-16-16-16l-32 0c-8.8 0-16 7.2-16 16zm144-16c-8.8 0-16 7.2-16 16l0 32c0 8.8 7.2 16 16 16l32 0c8.8 0 16-7.2 16-16l0-32c0-8.8-7.2-16-16-16l-32 0zM328 384c13.3 0 24.3-10.9 21-23.8c-10.6-41.5-48.2-72.2-93-72.2s-82.5 30.7-93 72.2c-3.3 12.8 7.8 23.8 21 23.8l144 0z"/></svg></div>
-         <p>Hotel</p>
-  </div>
-  <div class="tax-toggle">
-  <div class="form-check-reverse form-switch">
-    <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
-    <label class="form-check-label" for="flexSwitchCheckDefault">Display total after taxes</label>
-  </div>
-</div>
-</div>
-<div class="row gx-2 gy-3">
-  <% for (let listing of allListings) { %>
-    <div class="col-lg-3 col-md-4 col-sm-12 mt-3">
-      <a href="/listings/<%= listing._id %>" class="listing-link">
-        <div class="card listing-card" >
-          <img
-            src="<%= listing.image %>"
-            class="card-img-top"
-            alt="listing_image"
-            style="height: 20rem; object-fit: cover;"
-            
-          />
-           <div class="card-img-overlay"></div>
-         
-          <div class="card-body">
-            <p class="card-text">
-              <b><%= listing.title %></b><br />
-              &#8377;<%= listing.price.toLocaleString("en-IN") %>/night
-        <sub class="tax-info">  &nbsp; &nbsp;+18%GST </sub>
-            </p>
+    <!-- Listings Grid -->
+    <div class="row">
+      <% if (listings.length===0) { %>
+        <div class="col-12 text-center">
+          <div class="alert alert-info">
+            No listings found matching your criteria.
           </div>
         </div>
-      </a>
+        <% } else { %>
+          <% listings.forEach((listing)=> { %>
+            <div class="col-md-6 col-lg-3 mb-4">
+              <div class="card h-100">
+                <img src="<%= listing.image %>" class="card-img-top" alt="<%= listing.title %>"
+                  style="height: 200px; object-fit: cover;">
+                <div class="card-body">
+                  <h5 class="card-title">
+                    <%= listing.title %>
+                  </h5>
+                  <p class="card-text text-truncate">
+                    <%= listing.description %>
+                  </p>
+                  <p class="card-text">
+                    <small class="text-muted">
+                      <i class="fas fa-map-marker-alt"></i>
+                      <%= listing.location %>
+                    </small>
+                  </p>
+                  <p class="card-text">
+                    <strong>₹<%= listing.price %></strong> / night
+                  </p>
+                  <a href="/listings/<%= listing._id %>" class="btn btn-primary">View Details</a>
+                </div>
+              </div>
+            </div>
+            <% }); %>
+              <% } %>
     </div>
-  <% } %>
-</div>
-<script>
-let taxswitch = document.getElementById("flexSwitchCheckDefault");
-taxswitch.addEventListener("click", () => {
-    let taxinfo = document.getElementsByClassName("tax-info");
-    if (taxinfo.length > 0) {
-        for (let info of taxinfo) {
-            info.style.display = info.style.display !== "inline" ? "inline" : "none";
-        }
-    } else {
-        console.error("No elements with class 'tax-info' found");
+
+    <!-- Pagination -->
+    <% if (totalPages> 1) { %>
+      <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+          <!-- First Page -->
+          <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+            <a class="page-link" href="?page=1<%= queryString %>" aria-label="First">
+              <span aria-hidden="true">&laquo;&laquo;</span>
+            </a>
+          </li>
+
+          <!-- Previous Page -->
+          <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+            <a class="page-link" href="?page=<%= currentPage - 1 %><%= queryString %>" aria-label="Previous">
+              <span aria-hidden="true">&laquo;</span>
+            </a>
+          </li>
+
+          <!-- Page Numbers -->
+          <% let startPage=Math.max(1, currentPage - 2); let endPage=Math.min(totalPages, startPage + 4); if (endPage -
+            startPage < 4) { startPage=Math.max(1, endPage - 4); } %>
+
+            <% for(let i=startPage; i <=endPage; i++) { %>
+              <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                <a class="page-link" href="?page=<%= i %><%= queryString %>">
+                  <%= i %>
+                </a>
+              </li>
+              <% } %>
+
+                <!-- Next Page -->
+                <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+                  <a class="page-link" href="?page=<%= currentPage + 1 %><%= queryString %>" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                  </a>
+                </li>
+
+                <!-- Last Page -->
+                <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+                  <a class="page-link" href="?page=<%= totalPages %><%= queryString %>" aria-label="Last">
+                    <span aria-hidden="true">&raquo;&raquo;</span>
+                  </a>
+                </li>
+        </ul>
+      </nav>
+      <% } %>
+  </div>
+
+  <style>
+    #suggestions {
+      max-height: 200px;
+      overflow-y: auto;
     }
-});
 
-</script>
+    .suggestion-item {
+      padding: 8px 12px;
+      cursor: pointer;
+    }
 
+    .suggestion-item:hover {
+      background-color: #f8f9fa;
+    }
+  </style>
+
+  <script>
+    // Auto-suggest feature
+    const searchInput = document.getElementById('searchInput');
+    const suggestionsDiv = document.getElementById('suggestions');
+    let debounceTimer;
+
+    searchInput.addEventListener('input', async (e) => {
+      const query = e.target.value.trim();
+
+      // Clear previous timer
+      clearTimeout(debounceTimer);
+
+      // Hide suggestions if query is too short
+      if (query.length < 2) {
+        suggestionsDiv.style.display = 'none';
+        return;
+      }
+
+      // Set new timer for debouncing
+      debounceTimer = setTimeout(async () => {
+        try {
+          const response = await fetch(`/listings/api/suggestions?q=${encodeURIComponent(query)}`);
+          const suggestions = await response.json();
+
+          if (suggestions.length > 0) {
+            suggestionsDiv.innerHTML = suggestions
+              .map(suggestion => `<div class="suggestion-item">${suggestion}</div>`)
+              .join('');
+            suggestionsDiv.style.display = 'block';
+          } else {
+            suggestionsDiv.style.display = 'none';
+          }
+
+          // Add click handlers to suggestions
+          document.querySelectorAll('.suggestion-item').forEach(item => {
+            item.addEventListener('click', () => {
+              searchInput.value = item.textContent;
+              suggestionsDiv.style.display = 'none';
+              searchInput.form.submit();
+            });
+          });
+        } catch (error) {
+          console.error('Error fetching suggestions:', error);
+          suggestionsDiv.style.display = 'none';
+        }
+      }, 300); // 300ms debounce
+    });
+
+    // Close suggestions when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!searchInput.contains(e.target) && !suggestionsDiv.contains(e.target)) {
+        suggestionsDiv.style.display = 'none';
+      }
+    });
+
+    // Handle keyboard navigation
+    searchInput.addEventListener('keydown', (e) => {
+      const items = suggestionsDiv.getElementsByClassName('suggestion-item');
+      const currentItem = suggestionsDiv.querySelector('.suggestion-item:hover');
+
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        if (!currentItem) {
+          items[0]?.classList.add('hover');
+        } else {
+          const nextItem = currentItem.nextElementSibling;
+          if (nextItem) {
+            currentItem.classList.remove('hover');
+            nextItem.classList.add('hover');
+          }
+        }
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        if (currentItem) {
+          const prevItem = currentItem.previousElementSibling;
+          currentItem.classList.remove('hover');
+          if (prevItem) {
+            prevItem.classList.add('hover');
+          }
+        }
+      } else if (e.key === 'Enter' && currentItem) {
+        e.preventDefault();
+        currentItem.click();
+      } else if (e.key === 'Escape') {
+        suggestionsDiv.style.display = 'none';
+      }
+    });
+  </script>
