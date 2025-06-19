@@ -58,7 +58,7 @@ WanderWise is a full-stack web application that helps travelers find and book un
 
 3. Create a `.env` file in the root directory with the following variables:
    ```
-   MONGODB_URI=your_mongodb_connection_string
+   MONGODB_URI=your_mongodb_connection_string (do NOT hardcode this in app.js)
    SECRET=your_session_secret
    CLOUD_NAME=your_cloudinary_cloud_name
    CLOUD_API_KEY=your_cloudinary_api_key

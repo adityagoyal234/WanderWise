@@ -24,7 +24,7 @@ const userRouter = require("./routes/user.js");
 const flash = require('connect-flash');
 const { error } = require('console');
 
-const dburl = process.env.ATLASDB_URL || "mongodb+srv://adityagoyal000234:gVEt9HlrGl5mbFyb@cluster0.f5aesm8.mongodb.net/wanderlust";
+const dburl = process.env.MONGODB_URI;
 const secret = process.env.SECRET || "fallbackSecret";
 
 main()
